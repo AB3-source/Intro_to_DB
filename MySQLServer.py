@@ -1,35 +1,31 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 MySQLServer.py
-Script to create the database 'alx_book_store' in MySQL.
+Creates the database alx_book_store in MySQL server.
 """
 
 import mysql.connector
-from mysql.connector import Error
 
-def create_database():
-    connection = None
-    try:
-        # Connect to MySQL Server (update host, user, password as needed)
-        connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="your_password_here"
-        )
+try:
+    # Connect to MySQL server
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="your_password"  # <-- replace with your actual MySQL root password
+    )
+    cursor = conn.cursor()
 
-        if connection.is_connected():
-            cursor = connection.cursor()
-            cursor.execute("CREATE DATABASE IF NOT EXISTS alx_book_store")
-            print("Database 'alx_book_store' created successfully!")
+    # Create database if it does not exist
+    cursor.execute("CREATE DATABASE IF NOT EXISTS alx_book_store")
 
-    except Error as e:
-        print(f"Error while connecting to MySQL: {e}")
+    print("Database 'alx_book_store' created successfully!")
 
-    finally:
-        if connection and connection.is_connected():
-            cursor.close()
-            connection.close()
-            # print("MySQL connection closed.")  # optional if you want this message
+except mysql.connector.Error as err:
+    print(f"Error: {err}")
 
-if __name__ == "__main__":
-    create_database()
+finally:
+    # Ensure DB connection closes
+    if 'cursor' in locals() and cursor:
+        cursor.close()
+    if 'conn' in locals() and conn.is_connected():
+        conn.close()
